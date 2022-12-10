@@ -1,0 +1,5 @@
+mod.no	model	covars	Dbar	pD	DIC	dDIC	wDIC	Dxy.mean	Dxy.025	Dxy.975
+3	jags.OP.X0.Zfull.AR1	individual	6395.68	35.89	6431.57	0.00	0.54	0.42	0.41	0.43
+4	jags.OP.Xfull.Zfull.AR1	cohort + indiv	6396.41	35.50	6431.91	0.34	0.46	0.42	0.41	0.43
+1	jags.OP.X0.Z0.AR1	no covariates	6527.68	14.34	6542.02	110.45	0.00	0.34	0.33	0.35
+2	jags.OP.Xfull.Z0.AR1	cohort	6528.00	14.65	6542.65	111.08	0.00	0.34	0.33	0.35

@@ -1,0 +1,107 @@
+
+
+data
+{
+  Y <- max(year)
+  M <- max(age)
+
+  dimX <- dim(X)
+  numX <- dimX[2]
+
+  dimZ <- dim(Z)
+  numZ <- dimZ[2]
+}
+
+
+model
+{
+
+
+  , a00 ~ dnorm(0, 0.000001)
+  , aCUI.apr.may0 ~ dnorm(0, 0.000001)
+  , a0 <- a00/sigma
+  , aCUI.apr.may <- aCUI.apr.may0/sigma
+
+
+  , mu.b00 ~ dnorm(0, 0.000001)
+  , mu.btransport0 ~ dnorm(0, 0.000001)
+  , sigma.b00 ~ dunif(0, 10)
+  , sigma.btransport0 ~ dunif(0, 10)
+  , mu.b0 <- mu.b00/sigma
+  , mu.btransport <- mu.btransport0/sigma
+  , sigma.b0 <- sigma.b00/sigma
+  , sigma.btransport <- sigma.btransport0/sigma
+
+  rho0 ~ dunif(-1, 1)
+  rho <- rho0*(1 - IID)
+  sigma.yr0 ~ dunif(0, 10)
+  sigma.yr <- sigma.yr0/sigma
+  sigma ~ dunif(0, 10)
+
+  for(j in 1:(M-1))
+  {
+    tau.vals[j] ~ dnorm(0, 0.000001)
+  }
+  tau0 <- sort(tau.vals)
+  tau <- (tau0 - a0.int)/sigma
+
+
+  alpha0.mu[1] <- a00 + aCUI.apr.may0*CUI.apr.may[1]
+  alpha0.yr[1] ~ dnorm(alpha0.mu[1],  pow(sigma.yr0,-2))
+  alpha0.err[1] <- alpha0.yr[1] - alpha0.mu[1]
+
+  , b.yr00[1] ~ dnorm(mu.b.yr00, sigma.b.yr00)
+  , b.yrtransport0[1] ~ dnorm(mu.b.yrtransport0, sigma.b.yrtransport0)
+  , b.yr0[1] <- b.yr00[1]/sigma
+  , b.yrtransport[1] <- b.yrtransport0[1]/sigma
+
+  F.yr[1,1] <- 0
+  for(j in 1:(M-1))
+  {
+    F.yr[1,j+1] <- phi((tau0[j] - alpha0.yr[1])/sigma)
+    p.yr[1,j] <- max(min(F.yr[1,j+1] - F.yr[1,j], 1), 1e-10)
+  }
+  p.yr[1,M] <- max(min(1 - F.yr[1,M], 1), 1e-10)
+
+  for(y in 2:Y)
+  {
+    alpha0.mu[y] <- a00 + aCUI.apr.may0*CUI.apr.may[y]
+    alpha0.yr[y] ~ dnorm(alpha0.mu[y] + rho*alpha0.err[y-1],  pow(sigma.yr0,-2))
+    alpha0.err[y] <- alpha0.yr[y] - alpha0.mu[y]
+
+    , b.yr00[y] ~ dnorm(mu.b.yr00, sigma.b.yr00)
+    , b.yrtransport0[y] ~ dnorm(mu.b.yrtransport0, sigma.b.yrtransport0)
+    , b.yr0[y] <- b.yr00[y]/sigma
+    , b.yrtransport[y] <- b.yrtransport0[y]/sigma
+
+    F.yr[y,1] <- 0
+    for(j in 1:(M-1))
+    {
+      F.yr[y,j+1] <- phi((tau0[j] - alpha0.yr[y])/sigma)
+      p.yr[y,j] <- max(min(F.yr[y,j+1] - F.yr[y,j], 1), 1e-10)
+    }
+    p.yr[y,M] <- max(min(1 - F.yr[y,M], 1), 1e-10)
+  }
+
+  alpha.yr <- (alpha0.yr - a0.int)/sigma
+
+
+  for(i in 1:length(age))
+  {
+    alpha0[i] <- alpha0.yr[year[i]] + b.yr00[year[i]] + b.yrtransport0[year[i]]*transport[i]
+
+    F[i,1] <- 0
+    for(j in 1:(M-1))
+    {
+      F[i,j+1] <- phi((tau0[j] - alpha0[i])/sigma)
+      p[i,j] <- max(min(F[i,j+1] - F[i,j], 1), 1e-10)
+    }
+    p[i,M] <- max(min(1 - F[i,M], 1), 1e-10)
+
+    age[i] ~ dcat(p[i,1:M])
+    cc[i] <- p[i,age[i]]==max(p[i,1:M])
+  }
+  ccr <- mean(cc)
+
+}
+
