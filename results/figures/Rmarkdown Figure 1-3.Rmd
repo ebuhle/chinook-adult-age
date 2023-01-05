@@ -90,7 +90,7 @@ ggplot(d.return, aes(x=as.factor(smy_year), y= n, fill=forcats::fct_rev(ReturnAg
   labs(x="Smolt Migration Year", y= "Number of returns ", 
        color="",
        fill ="",
-       title = "Proportion of returns by age and migration year",
+       title = "Number of returns by age and migration year",
        subtitle = "Smolt Migration Year: 1998 to 2019",
        caption = "")+
   scale_fill_manual(breaks = c("4-Ocean", "3-Ocean", "2-Ocean", "1-Ocean", "0-Ocean"),
@@ -132,7 +132,7 @@ ggplot(d.return, aes(x=as.factor(smy_year), y= n, fill=forcats::fct_rev(ReturnAg
   labs(x="Smolt Migration Year", y= "Number of returns ", 
        color="",
        fill ="",
-       title = "Proportion of returns by age and migration year",
+       title = "Number of returns by age and migration year",
        subtitle = "Smolt Migration Year: 1998 to 2019",
        caption = "")+
   scale_fill_manual(breaks = c("4-Ocean", "3-Ocean", "2-Ocean", "1-Ocean", "0-Ocean"),
