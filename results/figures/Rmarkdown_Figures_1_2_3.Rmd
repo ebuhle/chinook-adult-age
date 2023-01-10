@@ -11,8 +11,10 @@ output:
     code_folding: hide
 ---
 
-# {.tabset}
+#  {.tabset}
+
 Basefile wrangling
+
 ```{r, message=FALSE, error=FALSE, results='hide', class.source='fold-show'}
 #packages
 library(here)
@@ -44,9 +46,11 @@ df<- d %>%
 ```
 
 ## Figure 1. Return Numbers
-Number of smolts and adults by age vs smolt migration year. 
 
-figure 1 data wrangling:   
+Number of smolts and adults by age vs smolt migration year.
+
+figure 1 data wrangling:
+
 ```{r, message=FALSE, error=FALSE,warning=FALSE, class.source='fold-show'}
 
 
@@ -81,11 +85,11 @@ pal1<-hcl.colors(5,"Roma")
 
 ```
 
-
 ### Figure 1a
-Number of smolt and adults by age vs smolt migration year
-Centered at 0 with stacked bar --numbers
-```{r, fig.width=10}
+
+Number of smolt and adults by age vs smolt migration year Centered at 0 with stacked bar --numbers
+
+```{r,message=FALSE, error=FALSE,warning=FALSE, fig.width=10}
 #Centered at 0 with stacked bar --numbers
 #still need to fix labels for 0 and 1 ocean year 1999. Reverse label order
 
@@ -126,11 +130,9 @@ fig1a_1<-ggplot(d.return, aes(x=as.factor(smy_year))) +
   geom_text(data = subset(total, !ReturnAge %in% c("0-Ocean","1-Ocean")), aes( y=sum_labels, label = sum_labels), position = position_stack(vjust = .5), size = 2 )+
    geom_text(data = subset(total, ReturnAge %in% c("0-Ocean","1-Ocean")), aes( y=-sum_labels, label = sum_labels), position = position_stack(vjust = .5), size = 2)+
   geom_text(data = tot.group, aes( y=175, label = sumtot, fill = NULL), fontface = "bold") + theme(axis.text.x = element_blank())
-
-fig1a_1
 ```
 
-```{r}
+```{r,message=FALSE, error=FALSE,warning=FALSE}
 #proportional stacked bar
 fig1a_2<-ggplot(d.return, aes(x=as.factor(smy_year), y= n, fill=forcats::fct_rev(ReturnAge)))+
   geom_bar(position = position_fill(), stat="identity")+ 
@@ -141,23 +143,26 @@ fig1a_2<-ggplot(d.return, aes(x=as.factor(smy_year), y= n, fill=forcats::fct_rev
        subtitle = "",
        caption = "")+
     scale_fill_manual(values = pal1)+
-  scale_y_continuous(labels = scales::percent)+
   theme_classic()
 ```
 
-```{r}
+```{r,message=FALSE, error=FALSE,warning=FALSE, fig.width=8}
 fig1a<-ggarrange(fig1a_1,fig1a_2, ncol=1, common.legend = TRUE, legend = "bottom")
+fig1a
 ```
 
-### Figure 1b. 
-Number of smolt and adults by age and passage type vs smolt migration year 
+### Figure 1b.
 
-Points with trend line per returnage wrapped by pass_type --numbers and proportions
-```{r}
+Number of smolt and adults by age and passage type vs smolt migration year
+
+```{r,message=FALSE, error=FALSE,warning=FALSE}
+#Points with trend line per returnage wrapped by pass_type –numbers and proportions
+
 #labels for facet grid
 p.labs <- c("In-River", "Transported")
 names(p.labs) <- c("ROR", "T")
 
+#number
 fig1b_1<-ggplot(d.return, aes(x = smy_year, y= n, group = ReturnAge, color=ReturnAge))+
   geom_point(aes(color=ReturnAge, fill= ReturnAge), alpha=.7,  shape=21, size =.75)+
   geom_line(linewidth = .65)+
@@ -171,7 +176,7 @@ fig1b_1<-ggplot(d.return, aes(x = smy_year, y= n, group = ReturnAge, color=Retur
 theme_minimal()+ theme( legend.position = "none")+
   facet_wrap(~pass_type_T_R, labeller = labeller(pass_type_T_R = p.labs))
   
-
+#proportion
 fig1b_2<-ggplot(d.return, aes(x=as.factor(smy_year), y= n, fill=forcats::fct_rev(ReturnAge)))+
   geom_bar(position = position_fill(), stat="identity", width=.7)+ 
   labs(x="Smolt migration year", y= "Proportion of adult returns ", 
@@ -180,22 +185,21 @@ fig1b_2<-ggplot(d.return, aes(x=as.factor(smy_year), y= n, fill=forcats::fct_rev
        title = "",
        caption = "")+
     scale_fill_manual(values = pal1)+
-  scale_y_continuous(labels = scales::percent)+
-  scale_x_discrete(breaks = function(x){x[c(TRUE, FALSE)]})+
   theme_classic() + facet_wrap(~pass_type_T_R)+
   theme(strip.text.x = element_blank(), legend.position = "bottom")
 
-
+fig1b_2
 
 fig1b<-ggarrange(fig1b_1, fig1b_2, nrow = 2, vjust=5)
 
 fig1b
 ```
 
-
 ### Alternatives
+
 alternative fig 1b- point plot with smoothing line for all return ages across years
-```{r}
+
+```{r,message=FALSE, error=FALSE,warning=FALSE}
 ggplot(d.return, aes(x = smy_year, y= n))+
   geom_point(aes(color=ReturnAge, fill= ReturnAge), alpha=.7,  shape=21)+
   geom_smooth(span=.3, color="black", alpha=.1, linewidth = .65)+
@@ -212,13 +216,11 @@ theme_minimal()+ facet_wrap(~pass_type_T_R, labeller = labeller(pass_type_T_R = 
 
 ## Figure 2. Fork Length
 
+### Figure 2a.
 
+Fork length vs smolt migration year [boxplot or violin plot, including outliers](https://r-graph-gallery.com/violin.html)
 
-### Figure 2a. 
-Fork length vs smolt migration year
-[boxplot or violin plot, including outliers](https://r-graph-gallery.com/violin.html)
-
-```{r}
+```{r,message=FALSE, error=FALSE,warning=FALSE}
 fig.2a<-ggplot(df, aes(x=as.factor(smy_year), y=length)) +
   geom_violin(draw_quantiles = c(0.25, 0.5, 0.75), 
               color = "black", 
@@ -249,7 +251,8 @@ fig.2a<-ggplot(df, aes(x=as.factor(smy_year), y=length)) +
 fig.2a
 ```
 
-### Figure 2b. 
+### Figure 2b.
+
 Transported vs in-river juvenile fish fork length vs smolt migration year
 
 Side-by-side of Transport and ROR violin graphs
@@ -290,11 +293,11 @@ fig2b_violin<-ggplot(df, aes(x=as.factor(smy_year), y=length, color=pass_type_T_
 fig2b_violin
 ```
 
-
 ### Alternatives
 
-Alternative 2a: Ridges 
-```{r}
+Alternative 2a: Ridges
+
+```{r,message=FALSE, error=FALSE,warning=FALSE}
 ggplot(df, aes(y = forcats::fct_rev(as.factor(smy_year)))) +
   geom_density_ridges(
     aes(x = length), 
@@ -345,7 +348,8 @@ ggplot(df, aes(y = forcats::fct_rev(as.factor(smy_year)))) +
 ```
 
 Alternative 2b: Side-by-side of Transport and ROR violin graphs on side
-```{r, fig.height=10, fig.width =8 }
+
+```{r, fig.height=10, fig.width =8,message=FALSE, error=FALSE,warning=FALSE }
 ggplot(df, aes(y=forcats::fct_rev(as.factor(smy_year)), x=length, color=pass_type_T_R, fill=pass_type_T_R)) +
   geom_violin(draw_quantiles = c(0.25, 0.5, 0.75), 
               alpha=.2, 
@@ -382,8 +386,8 @@ ggplot(df, aes(y=forcats::fct_rev(as.factor(smy_year)), x=length, color=pass_typ
 
 ## Figure 3. Release Location
 
-
 figure 3 data wrangling
+
 ```{r, warning=FALSE, error=FALSE, message=FALSE, class.source='fold-show'}
 ##group and summarize to get count of returns per year>subbasin>pass_type
 
@@ -398,17 +402,82 @@ loc.sum <-df %>% mutate_if(sapply(df,is.character), as.factor) %>%
  
 ```
 
-### Figure 3a. 
-Proportion by release location vs. year 
+### Figure 3a.
 
+Proportion by release location vs. year
 
+```{r,message=FALSE, error=FALSE,warning=FALSE}
+library(RColorBrewer)
+# Define the number of colors you want
+nb.cols <- 19
+mycolors <- colorRampPalette(brewer.pal(9, "Set2"))(nb.cols)
 
-### Figure 3b. 
-Proportion by release location vs. year of transported vs in-river juvenile fish
-Same as Figure 3a, with transported vs in-river juvenile fish categories distinguished.
+#bar count
+  fig3a_1<-ggplot(d.rel, aes(x=as.factor(smy_year), y= count, fill=reorder(subbasin, -count)))+
+  geom_bar(position = "stack", stat="identity")+ 
+    scale_fill_manual(values = mycolors)+
+    labs(title ="Number of adult returns by subbasin vs smolt migration year",
+         subtitle = "Smolt migration years: 1998 to 2018",
+         x = "Smolt Migration Year",
+         y="Number of Adult Returns", 
+         fill= "")+
+    theme_minimal()+
+    theme(legend.key.size = unit(.3, 'cm'),
+          axis.text.x = element_text(size=7))
+ fig3a_1 
+#bar proportion
+fig3a_2<-  ggplot(d.rel, aes(x=as.factor(smy_year), y= count, fill=reorder(subbasin, -count)))+
+  geom_bar(position = "fill", stat="identity")+ 
+    scale_fill_manual(values = mycolors)+
+    labs(title ="Proportion of adult returns by subbasin vs smolt migration year",
+         subtitle = "Smolt migration years: 1998 to 2018",
+         x = "Smolt Migration Year",
+         y="Proportion of Adult Returns", 
+         fill= "")+
+    theme_minimal()+
+    theme(legend.key.size = unit(.3, 'cm'),
+          axis.text.x = element_text(size=7))
+fig3a_2
+```
 
-Stacked bars numbers and proportions for T/ROR (no smolt year)
 ```{r}
+fig3a<-ggarrange(fig3a_1,fig3a_2, ncol=1, common.legend = T, legend = "right")
+```
+
+
+### Alternatives
+```{r, fig.height=8,message=FALSE, error=FALSE,warning=FALSE}
+fig3a_3<-ggplot(d.rel, aes(y=reorder(subbasin, count), x= count, fill=reorder(subbasin, -count)))+
+  geom_bar(position = "stack", stat="identity", width = .95)+ 
+  scale_fill_manual(values = mycolors) +
+  labs(x="Number of Adult Returns",
+       y="",
+       fill="", 
+       title = "Number of adult returns by subbasin vs smolt migration year",
+       subtitle = "Smolt migration years: 1998-2018")+
+  theme_minimal()+
+  facet_wrap(~smy_year, ncol=5)+theme(legend.position = "none", axis.text.y = element_text(size=6))
+```
+
+```{r,message=FALSE, error=FALSE,warning=FALSE}
+#counts by year
+ggplot(d.rel, aes(y= count, x=as.factor(smy_year)))+
+  geom_bar(position = position_dodge(), stat = "identity", width=.7)+theme_minimal() 
+
+#returns by year faceted grid by subbasin
+ggplot(d.rel, aes(y= count, x=as.factor(smy_year)))+
+  geom_bar(position = position_dodge(), stat = "identity", width=.95)+
+  scale_y_continuous(position = "right")+
+  theme_minimal()+facet_grid(reorder(subbasin,-count) ~., switch = "y")+  
+  theme(strip.text.y.left  = element_text(angle = 0, size=5), axis.text.y = element_text(size=3),axis.text.x = element_text(size=5))
+```
+
+### Figure 3b.
+
+Proportion by release location vs. year of transported vs in-river juvenile fish Same as Figure 3a, with transported vs in-river juvenile fish categories distinguished.
+
+```{r,message=FALSE, error=FALSE,warning=FALSE}
+#Stacked bars numbers and proportions for T/ROR (no smolt year)
 # bar numbers
 fig3b1<-ggplot(loc.sum, aes(x=reorder(subbasin,count), y= count, fill=pass_type_T_R))+
   geom_bar(position = "stack", stat="identity")+ 
@@ -435,16 +504,20 @@ fig3b2<-ggplot(loc.sum, aes(x=reorder(subbasin,count), y= count, fill=pass_type_
        fill="", 
        title = "",
       subtitle = "" )+
-   scale_y_continuous(labels = scales::percent)+
   coord_flip() + theme_minimal()+theme(legend.position = "bottom", axis.text.y = element_blank())
 ```
 
-proportion for T/ROR wrapped by year
-```{r}
-#proportion wrapped by year
-pwrap<-ggplot(d.rel, aes(x=as.factor(smy_year), y= count, fill=pass_type_T_R))+
+```{r, fig.height=10, fig.width=10,message=FALSE, error=FALSE,warning=FALSE}
+
+fig3b_1<-ggarrange(fig3b1,fig3b2, common.legend = T, legend = "bottom")
+fig3b_1
+```
+
+```{r,message=FALSE, error=FALSE,warning=FALSE}
+#proportion and passage type wrapped by year
+fig3b_2<-ggplot(d.rel, aes(x=as.factor(smy_year), y= count, fill=pass_type_T_R))+
   geom_bar(position = "fill", stat="identity", width=.7)+ 
-  labs(x="",
+  labs(x="Smolt Migration Year",
        y="Proportion of Adult Returns",
        fill="", 
        title = "Proportion of adult returns by subbasin and passage type vs smolt migration year",
@@ -452,15 +525,27 @@ pwrap<-ggplot(d.rel, aes(x=as.factor(smy_year), y= count, fill=pass_type_T_R))+
   scale_fill_manual(breaks = c("T", "ROR" ),
                      labels = c( "Transported", "In-River"),
                      values = c( "lemonchiffon3", "cadetblue4"))+  
-    scale_y_continuous(labels = scales::percent)+
-  theme_minimal()+ theme(legend.position = "none", axis.text.x=element_text(angle=90, vjust = 0.5, hjust=1, size = 4))+ 
-  facet_wrap(~reorder(subbasin, -count), ncol=6)
+  theme_minimal()+ theme(legend.position = "top", axis.text.x=element_text(angle = 90,size = 5))+ 
+  facet_wrap(~reorder(subbasin, -count), ncol=5)
+
 ```
 
 
-```{r, fig.height=10, fig.width=10}
-p<-ggarrange(ggarrange(fig3b1, fig3b2, ncol = 2,  common.legend = T, legend = "top"),pwrap, # first row with two plots
-          nrow = 2) 
 
-p
+
+```{r,message=FALSE, error=FALSE,warning=FALSE}
+#number of returns and passage type wrapped by year
+fig3b_3<-ggplot(d.rel, aes(x=as.factor(smy_year), y= count, fill=pass_type_T_R))+
+  geom_bar(position = "stack", stat="identity", width=.7)+ 
+  labs(x="Smolt Migration Year",
+       y="Number of Adult Returns",
+       fill="", 
+       title = "Number of adult returns by subbasin and passage type vs smolt migration year",
+       subtitle = "Smolt migration years: 1998-2018")+
+  scale_fill_manual(breaks = c("T", "ROR" ),
+                     labels = c( "Transported", "In-River"),
+                     values = c( "lemonchiffon3", "cadetblue4"))+  
+  theme_minimal()+ theme(legend.position = "top", axis.text.x=element_text(angle = 90, size = 5))+ 
+  facet_wrap(~reorder(subbasin, -count), ncol=5)
+fig3b_3
 ```
