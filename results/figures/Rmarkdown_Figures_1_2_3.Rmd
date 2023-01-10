@@ -222,7 +222,7 @@ Fork length vs smolt migration year
 fig.2a<-ggplot(df, aes(x=as.factor(smy_year), y=length)) +
   geom_violin(draw_quantiles = c(0.25, 0.5, 0.75), 
               color = "black", 
-              trim = FALSE,
+              trim = TRUE,
               size =.3)+
    geom_hline(yintercept=median(df$length), 
               linetype="solid", 
@@ -258,7 +258,7 @@ Side-by-side of Transport and ROR violin graphs
 fig2b_violin<-ggplot(df, aes(x=as.factor(smy_year), y=length, color=pass_type_T_R, fill=pass_type_T_R)) +
   geom_violin(draw_quantiles = c(0.25, 0.5, 0.75), 
               alpha=.2, 
-              trim = FALSE, 
+              trim = TRUE, 
               size=.3)+
    geom_hline(yintercept=median(df$length), 
               linetype="solid", 
@@ -407,7 +407,7 @@ Proportion by release location vs. year
 Proportion by release location vs. year of transported vs in-river juvenile fish
 Same as Figure 3a, with transported vs in-river juvenile fish categories distinguished.
 
-Stacked bars numbers and proportionsfor T/ROR (no smolt year)
+Stacked bars numbers and proportions for T/ROR (no smolt year)
 ```{r}
 # bar numbers
 fig3b1<-ggplot(loc.sum, aes(x=reorder(subbasin,count), y= count, fill=pass_type_T_R))+
